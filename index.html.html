@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คลังข้อสอบ & สรุปเฉลย: จริยธรรมและกฎหมายคอมพิวเตอร์</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    .correct-choice { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; }
+    .wrong-choice { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white py-8 px-4 shadow-md sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">คลังข้อสอบ & เฉลย Blooket</h1>
+        <p class="text-slate-400 text-sm mt-1">จริยธรรมคอมพิวเตอร์ | พ.ร.บ. ธุรกรรมฯ | สัญญา NDA | พ.ร.บ. คอมพิวเตอร์</p>
+      </div>
+      <div class="flex items-center gap-2 bg-slate-800 p-2 rounded-xl border border-slate-700 text-sm">
+        <span class="text-slate-400 px-2">คะแนนทดสอบ:</span>
+        <span id="score-display" class="font-bold text-emerald-400 text-lg">0 / 0</span>
+        <button onclick="resetQuiz()" class="ml-2 px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs transition">รีเซ็ต</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Controls & Category Filters -->
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+      <div class="flex flex-wrap gap-2" id="filter-buttons">
+        <button onclick="filterCategory('all')" class="filter-btn active px-4 py-2 rounded-xl text-sm font-medium transition bg-indigo-600 text-white">ทั้งหมด (33)</button>
+        <button onclick="filterCategory('cat1')" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200">หมวด 1: จริยธรรม (10)</button>
+        <button onclick="filterCategory('cat2')" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200">หมวด 2: ธุรกรรมฯ & NDA (12)</button>
+        <button onclick="filterCategory('cat3')" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200">หมวด 3: พ.ร.บ.คอมพ์ (11)</button>
+      </div>
+      <div class="flex items-center gap-3">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="toggle-reveal" class="sr-only peer" onchange="toggleRevealAll()">
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          <span class="ml-2 text-sm font-medium text-slate-700">เฉลยทั้งหมด</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Questions Container -->
+    <div id="quiz-container" class="space-y-6"></div>
+  </main>
+
+  <script>
+    const questionsData = [
+      // หมวด 1
+      { id: 1, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "การกระทำที่ผิดจริยธรรมคอมพิวเตอร์", question: "ข้อใดเป็นการกระทำที่ผิดจริยธรรมของคอมพิวเตอร์?", choices: ["สร้างโปรแกรม Virus Computer ที่ก่อให้เกิดความเสียหายแก่ผู้อื่น", "การละเมิดลิขสิทธิ์ซอฟต์แวร์", "การเข้าถึงข้อมูลหรือคอมพิวเตอร์ผู้อื่นโดยไม่ได้รับอนุญาต", "ถูกทุกข้อ"], answerIndex: 3, note: "การสร้างไวรัสทำลายระบบ การละเมิดลิขสิทธิ์ และการเข้าถึงระบบ/ข้อมูลผู้อื่นโดยไม่ได้รับอนุญาต ล้วนเป็นการกระทำที่ขัดต่อหลักจริยธรรมคอมพิวเตอร์ทั้งสิ้น" },
+      { id: 2, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "หลักคุณธรรมจริยธรรม PAPA", question: "คุณธรรมจริยธรรมเกี่ยวกับการใช้เทคโนโลยีคอมพิวเตอร์และสารสนเทศ จะกล่าวถึงใน 4 ประเด็น ที่รู้จักกันในลักษณะตัวย่อว่าอะไร?", choices: ["PAPA", "GDPR", "PDPA", "IAAA"], answerIndex: 0, note: "PAPA ย่อมาจาก Privacy (ความเป็นส่วนตัว), Accuracy (ความถูกต้องแม่นยำ), Property (ความเป็นเจ้าของ/ทรัพย์สิน), Access (การเข้าถึงข้อมูล)" },
+      { id: 3, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "องค์ประกอบของจริยธรรม", question: "ข้อใดกล่าวถูกต้องเกี่ยวกับองค์ประกอบของจริยธรรม?", choices: ["ความรู้ (Cognitive) คือการรู้ว่ากฎหมายกำหนดว่าอะไรทำได้ และอะไรทำไม่ได้", "ความคิด (Thought) คือความพึงพอใจ ศรัทธา เลื่อมใส ในจริยธรรมมาเป็นแนวในการประพฤติปฏิบัติ", "ความสำนึก (Affective) ความเข้าใจในเหตุผลของความถูกต้องแยกออกจากความไม่ถูกต้องได้", "การแสดงออก (Moral conduct) คือการที่บุคคลตัดสินใจประพฤติดีในสถานการณ์ต่าง ๆ"], answerIndex: 3, note: "องค์ประกอบของจริยธรรมมี 3 ด้าน: 1. ความรู้เชิงจริยธรรม (Cognitive - ความรู้ความเข้าใจว่าอะไรถูก/ผิด), 2. ทัศนคติ/ความสำนึก (Affective - ความพึงพอใจศรัทธาในการทำดี), 3. การแสดงออก (Moral conduct - การตัดสินใจประพฤติปฏิบัติดีในสถานการณ์จริง)" },
+      { id: 4, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "การละเมิดทรัพย์สินทางปัญญา (กรณีทำสำเนาซีดีเพลง)", question: "“นางสาวกุ๊กไก่ ซื้อแผ่นซีดีเพลงของพี่เบิร์ดมา และทำสำเนา (copy) ซีดีเพลงส่งไปให้เพื่อนทางไปรษณีย์” ทำผิดเกี่ยวกับทรัพย์สินทางปัญญาข้อใด?", choices: ["สิทธิบัตร", "ลิขสิทธิ์", "ทั้งความลับทางการค้าและสิทธิบัตร", "ความลับทางการค้า"], answerIndex: 1, note: "ผลงานเพลง ดนตรีกรรม และสิ่งบันทึกเสียง จัดเป็นงานอันมี 'ลิขสิทธิ์' การทำสำเนา (Copy) ส่งแจกจ่ายให้ผู้อื่นโดยไม่ได้รับอนุญาตจากเจ้าของลิขสิทธิ์ ถือเป็นการละเมิดลิขสิทธิ์" },
+      { id: 5, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "ความหมายของ Shareware", question: "คำว่า Shareware หมายความว่าอย่างไร?", choices: ["ให้ใช้งานได้ฟรี คัดลอก และเผยแพร่ให้ผู้อื่นได้", "ซื้อลิขสิทธิ์ และมีสิทธิ์ใช้", "ให้ทดลองใช้ได้ก่อนที่จะตัดสินใจซื้อ", "เป็นโปรแกรมหรือข้อมูลที่มีคนส่งมาให้"], answerIndex: 2, note: "Shareware คือซอฟต์แวร์ประเภท 'ให้ทดลองใช้ก่อนตัดสินใจซื้อ' (Try before you buy) โดยผู้พัฒนาอนุญาตให้ใช้ฟรีในระยะเวลาหรือฟังก์ชันจำกัด หากต้องการใช้ต่อต้องซื้อลิขสิทธิ์" },
+      { id: 6, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "คอมพิวเตอร์ในฐานะเป้าหมายของอาชญากรรม", question: "ข้อใดเป็นตัวอย่างของคอมพิวเตอร์ในฐานะที่เป็น 'เป้าหมาย' ของการก่ออาชญากรรม?", choices: ["การก่อกวนระบบของผู้อื่น", "การถอดรหัสโปรแกรมคอมพิวเตอร์", "การฟอกเงิน", "การโจรกรรมข้อมูล"], answerIndex: 0, note: "คอมพิวเตอร์ในฐานะ 'เป้าหมาย' (Target) คือการที่ระบบ/เครื่องคอมพิวเตอร์ตกเป็นเป้าถูกโจมตีโดยตรง เช่น การก่อกวนหรือทำลายระบบ ส่วนการฟอกเงินหรือโจรกรรมข้อมูลเป็นการใช้คอมพิวเตอร์เป็น 'เครื่องมือ' (Tool)" },
+      { id: 7, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "ลักษณะที่ไม่ถือเป็นจริยธรรม", question: "ข้อใดไม่ถือเป็นจริยธรรม?", choices: ["ไม่มีกฎตายตัว ขึ้นอยู่กับจิตใต้สำนึกของแต่ละบุคคล", "ผู้ใดไม่ปฏิบัติตามจะต้องได้รับโทษทางกฎหมาย", "เป็นคุณธรรมที่แสดงออกมาให้เป็นที่ปรากฏ", "เป็นเครื่องมือในการควบคุมพฤติกรรมที่ไม่พึงประสงค์ของสังคม"], answerIndex: 1, note: "จริยธรรมเป็นเรื่องของจิตสำนึก ความรับผิดชอบ และบรรทัดฐานทางสังคม ไม่มีบทลงโทษทางกฎหมายโดยตรงเหมือนตัวบทกฎหมาย" },
+      { id: 8, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "คุณลักษณะของกฎหมาย", question: "ข้อใดไม่ใช่คุณลักษณะของกฎหมาย?", choices: ["บังคับใช้กับทุกคน", "สังคมจะเป็นผู้ตัดสินว่าใครกระทำความผิด", "เป็นคำสั่งหรือข้อบังคับของรัฐ", "มีบทลงโทษเป็นลายลักษณ์อักษรชัดเจน"], answerIndex: 1, note: "ศาลและกระบวนการยุติธรรมเป็นผู้ตัดสินความผิดตามกฎหมาย ไม่ใช่การตัดสินโดยสังคมหรือกระแสสังคม" },
+      { id: 9, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "องค์ประกอบของจริยธรรม (ข้อที่มิใช่)", question: "ข้อใดไม่ใช่องค์ประกอบของจริยธรรม?", choices: ["การแสดงออก (Moral conduct)", "ความรู้ (Cognitive)", "ความคิด (Thought)", "ความสำนึก (Affective)"], answerIndex: 2, note: "องค์ประกอบของจริยธรรมมี 3 ส่วนหลักคือ ความรู้ (Cognitive), ความสำนึก/ทัศนคติ (Affective), และการแสดงออก (Moral conduct) ดังนั้น 'ความคิด (Thought)' จึงไม่ใช่องค์ประกอบหลักตามทฤษฎี" },
+      { id: 10, category: "cat1", categoryName: "หมวด 1: จริยธรรม", title: "การละเมิดจริยธรรมด้านความเป็นส่วนตัว", question: "การใช้กล้องวงจรปิดเพื่อตรวจสอบการปฏิบัติงานของพนักงานโดยไม่ได้รับอนุญาต เป็นการกระทำที่ผิดจริยธรรมในลักษณะใด?", choices: ["ความเป็นเจ้าของ (Property)", "ความเป็นส่วนตัว (Privacy)", "ความถูกต้อง (Accuracy)", "การเข้าถึงข้อมูล (Accessibility)"], answerIndex: 1, note: "การแอบติดตาม เฝ้าดู หรือบันทึกภาพพฤติกรรมส่วนบุคคลโดยไม่ได้รับความยินยอมหรือแจ้งล่วงหน้า ถือเป็นการละเมิดหลักความเป็นส่วนตัว (Privacy)" },
+
+      // หมวด 2
+      { id: 11, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "องค์ประกอบของลายมือชื่ออิเล็กทรอนิกส์", question: "(พรบ. ธุรกรรม) ข้อใดไม่ใช่องค์ประกอบของลายมือชื่ออิเล็กทรอนิกส์ที่มีผลตามกฎหมาย?", choices: ["ลายเซ็นต์ต้องเป็นตัวเขียนเท่านั้น", "สามารถระบุตัวตนของเจ้าของลายเซ็นได้", "ใช้วิธีการที่เชื่อถือในการเซ็นได้", "สามารถระบุเจตนาตามข้อความที่เซ็นได้"], answerIndex: 0, note: "ตามมาตรา 9 ลายมือชื่ออิเล็กทรอนิกส์ไม่จำเป็นต้องเป็นตัวเขียน (ลายเซ็นมือ) สามารถเป็นตัวอักษร ตัวเลข รหัส PIN หรือ biometric ก็ได้ ขอเพียงสามารถระบุตัวตน แสดงเจตนา และใช้วิธีการที่เชื่อถือได้" },
+      { id: 12, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "ความสมบูรณ์ของสัญญาผ่านอีเมล (มาตรา 7)", question: "(พรบ. ธุรกรรม) บริษัทส่ง PO และตอบรับยืนยันผ่านทางอีเมล ต่อมาฝ่ายขายอ้างว่าอีเมลไม่ใช่สัญญาเพราะไม่ได้เซ็นบนกระดาษ ข้ออ้างถูกต้องหรือไม่?", choices: ["ไม่แน่นอน กฎหมายไม่ได้ครอบคลุมนิติบุคคล", "ถูกต้อง สัญญามูลค่าสูงต้องทำเป็นกระดาษ", "ไม่ถูกต้อง เพราะมาตรา 7 บัญญัติห้ามมิให้ปฏิเสธผลผูกพันทางกฎหมายของข้อความเพียงเพราะอยู่ในรูปของข้อมูลอิเล็กทรอนิกส์", "ถูกต้อง เฉพาะกรณีเกิน 2 ล้านบาท"], answerIndex: 2, note: "ตาม พ.ร.บ.ธุรกรรมอิเล็กทรอนิกส์ มาตรา 7 บัญญัติห้ามมิให้ปฏิเสธความมีผลผูกพันและการบังคับใช้ทางกฎหมายของข้อความใด เพียงเพราะเหตุที่ข้อความนั้นอยู่ในรูปของข้อมูลอิเล็กทรอนิกส์" },
+      { id: 13, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "หลัก Party Autonomy ในธุรกรรมอิเล็กทรอนิกส์", question: "(พรบ. ธุรกรรม) สองบริษัทตกลงกันว่าจะใช้ลายเซ็นบน Touchscreen แทน PKI ในการอนุมัติภายใน สอดคล้องกับหลักการใด?", choices: ["หลัก Non-Discrimination เพียงอย่างเดียว", "หลัก Party Autonomy ที่เปิดให้คู่สัญญาสามารถตกลงกันเองได้ว่าจะใช้วิธีการใด", "หลัก Functional Equivalence เพียงอย่างเดียว", "ไม่สอดคล้องกับหลักการใดเลย"], answerIndex: 1, note: "หลัก Party Autonomy (เจตจำนงอิสระของคู่สัญญา) ให้สิทธิคู่กรณีในการตกลงเลือกวิธีการ รูปแบบ หรือระดับความปลอดภัยของเทคโนโลยีที่เหมาะสมในการทำธุรกรรมร่วมกันได้" },
+      { id: 14, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "เวลาการรับข้อมูลอิเล็กทรอนิกส์ (มาตรา 24)", question: "(พรบ. ธุรกรรม) ส่งสัญญาเข้า LINE ส่วนตัวซึ่งไม่ใช่ช่องทางทางการที่กำหนดไว้ จะถือว่า 'ได้รับ' เอกสารเมื่อใด?", choices: ["ถือว่าได้รับเมื่อผู้รับสามารถเข้าถึง (เปิดอ่าน) ข้อความนั้นได้จริง เนื่องจากมิใช่ระบบที่กำหนดไว้เฉพาะ", "ถือว่าไม่มีผลทางกฎหมาย", "นับเวลาที่ได้รับจากวันถัดไปเสมอ", "ถือว่าได้รับทันทีที่ส่งออกจากเครื่องผู้ส่ง"], answerIndex: 0, note: "ตามมาตรา 24 วรรคสอง หากส่งไปยังระบบสารสนเทศของผู้รับที่ไม่ได้กำหนดไว้เฉพาะเจาะจง ให้ถือว่าการรับมีผลเมื่อผู้รับสามารถเข้าถึงข้อมูลนั้นได้จริง (เปิดอ่าน)" },
+      { id: 15, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "พยานหลักฐานทางอิเล็กทรอนิกส์ในชั้นศาล", question: "(พรบ. ธุรกรรม) การที่ศาลจะเชื่อถือพยานหลักฐานทางอิเล็กทรอนิกส์หรือไม่นั้นขึ้นอยู่กับข้อใด?", choices: ["การชั่งน้ำหนักพยานหลักฐานของศาลเอง", "ความน่าเชื่อถือของพยานหลักฐาน", "ถูกทั้ง ข้อ ก. และ ข้อ ข.", "ต้องเชื่อเสมอ เพราะถือเป็นหลักฐาน"], answerIndex: 2, note: "ตามมาตรา 11 การรับฟังพยานหลักฐานอิเล็กทรอนิกส์ ศาลต้องพิจารณาถึงความน่าเชื่อถือของกระบวนการสร้าง การเก็บรักษา ความครบถ้วนของข้อมูล ควบคู่กับการใช้ดุลยพินิจในการชั่งน้ำหนักพยานหลักฐานของศาล" },
+      { id: 16, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "หลัก Technology Neutrality", question: "(พรบ. ธุรกรรม) Technology Neutrality (ความเท่าเทียมของเทคโนโลยี) ใช้ในการวินิจฉัยมาตราใด?", choices: ["มาตรา 9", "มาตรา 5", "มาตรา 7", "มาตรา 8"], answerIndex: 2, note: "มาตรา 7 สะท้อนหลักการ Technology Neutrality / Non-discrimination โดยห้ามปฏิเสธผลทางกฎหมายเพียงเพราะอยู่ในรูปแบบข้อมูลอิเล็กทรอนิกส์ ไม่ว่าจะสร้างขึ้นด้วยเทคโนโลยีใด" },
+      { id: 17, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "หลักการพื้นฐานของ พ.ร.บ.ธุรกรรมฯ", question: "(พรบ. ธุรกรรม) ข้อใดไม่ใช่หลักการพื้นฐานของ พ.ร.บ.ธุรกรรมฯ?", choices: ["คู่สัญญาตกลงใช้ร่วมกัน", "ถ้ามีระบบอิเล็กทรอนิกส์ต้องยกเลิกระบบกระดาษ", "รองรับทุกเทคโนโลยี", "ความเท่าเทียมกันระหว่าง “กระดาษ” และ “ข้อมูลอิเล็กทรอนิกส์”"], answerIndex: 1, note: "พ.ร.บ.ธุรกรรมฯ มุ่งเน้นรับรองความเท่าเทียมกันทางหน้าที่ (Functional Equivalence) ของข้อมูลอิเล็กทรอนิกส์กับกระดาษ กฎหมายไม่ได้บังคับให้ต้องยกเลิกระบบกระดาษเดิม" },
+      { id: 18, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "การเลือกใช้สัญญา Unilateral NDA", question: "(NDA) จ้างที่ปรึกษาอิสระเข้ามาพัฒนาระบบ ซึ่งที่ปรึกษาเข้าถึงข้อมูลลับของบริษัทฝ่ายเดียว ควรใช้สัญญา NDA ประเภทใด?", choices: ["Unilateral NDA (สัญญาฝ่ายเดียว)", "Mutual NDA (สัญญาสองฝ่าย)", "Non-Compete Agreement", "Multilateral NDA (สัญญาหลายฝ่าย)"], answerIndex: 0, note: "Unilateral NDA (สัญญาฝ่ายเดียว) เหมาะสำหรับกรณีที่มีฝ่ายหนึ่งเป็นผู้เปิดเผยข้อมูลลับ (บริษัท) และอีกฝ่ายเป็นผู้รับข้อมูลลับเพื่อปฏิบัติงานแต่เพียงฝ่ายเดียว (ที่ปรึกษา)" },
+      { id: 19, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "ขอบเขต NDA และการไปทำงานกับคู่แข่ง", question: "(NDA) เซ็นเฉพาะ NDA (ไม่ได้ทำ Non-Compete) แล้วไปทำงานบริษัทคู่แข่งโดยไม่ได้นำความลับไปเปิดเผย ถือว่าฝ่าฝืนหรือไม่?", choices: ["ขึ้นอยู่กับตำแหน่งงานใหม่", "ไม่ฝ่าฝืน เพราะ NDA คุ้มครองเฉพาะความลับ ไม่ได้ห้ามไปทำงานกับคู่แข่ง", "ฝ่าฝืน เพราะ NDA ครอบคลุมการห้ามทำงานกับคู่แข่งเสมอ", "ฝ่าฝืนในทุกกรณี"], answerIndex: 1, note: "สัญญา NDA (Non-Disclosure Agreement) มีขอบเขตคุ้มครองเฉพาะการห้ามเปิดเผยข้อมูลลับ หากไม่มีการทำข้อตกลงห้ามแข่งขัน (Non-Compete) และไม่ได้นำความลับไปเปิดเผย ย่อมสามารถไปทำงานกับคู่แข่งได้โดยไม่ผิดสัญญา" },
+      { id: 20, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "การถูก Phishing OTP และความน่าเชื่อถือลายมือชื่อ (มาตรา 26)", question: "(พรบ. ธุรกรรม) ลูกค้าถูก Phishing หลอกเอา OTP โอนเงิน ข้อโต้แย้งใดสอดคล้องกับหลักกฎหมายมากที่สุด?", choices: ["OTP ไม่ถือเป็นลายมือชื่ออิเล็กทรอนิกส์ในทุกกรณี", "OTP ที่ถูกขโมยมีผลผูกพันเสมอ", "ต้องพิจารณาความน่าเชื่อถือตามมาตรา 26 ด้วยว่าข้อมูลที่ใช้ยังคงอยู่ภายใต้การควบคุมของเจ้าของลายมือชื่อจริงหรือไม่", "ธนาคารไม่ต้องรับผิดชอบใดๆ"], answerIndex: 2, note: "มาตรา 26 บัญญัติว่า ลายมือชื่ออิเล็กทรอนิกส์ที่เชื่อถือได้ ข้อมูลที่ใช้สร้างลายมือชื่อ (เช่น OTP/รหัสผ่าน) ต้องอยู่ภายใต้การควบคุมของเจ้าของลายมือชื่อในขณะสร้าง หากถูกขโมย/หลอกลวง ย่อมส่งผลต่อความน่าเชื่อถือและผลผูกพัน" },
+      { id: 21, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "สัญญา Mutual NDA ในการเจรจา Joint Venture", question: "(NDA) สองบริษัทเจรจาร่วมทุน (Joint Venture) และจำเป็นต้องแลกเปลี่ยนข้อมูลลับทางการเงินของทั้งสองฝ่าย ควรใช้สัญญาใด?", choices: ["Unilateral NDA", "ไม่จำเป็นต้องทำ NDA", "ทำ NDA แยกฝ่ายละฉบับไม่ผูกพันกัน", "Mutual NDA (สัญญาสองฝ่าย)"], answerIndex: 3, note: "Mutual NDA (สัญญาสองฝ่าย/สัญญาต่างตอบแทน) ใช้เมื่อทั้งสองฝ่ายจำเป็นต้องแลกเปลี่ยนและเปิดเผยข้อมูลลับซึ่งกันและกัน โดยทั้งสองฝ่ายต่างมีหน้าที่รักษาความลับของอีกฝ่าย" },
+      { id: 22, category: "cat2", categoryName: "หมวด 2: พ.ร.บ. ธุรกรรมฯ & NDA", title: "ขอบเขตธุรกรรมทางอิเล็กทรอนิกส์", question: "(พรบ. ธุรกรรม) ข้อใดไม่ถือเป็น “ธุรกรรมทางอิเล็กทรอนิกส์”?", choices: ["การโพสต์ข่าวสารบน facebook", "การโอนเงินด้วยระบบอัตโนมัติผ่านเครือข่าย", "การตกลงทำสัญญาซื้อ-ขายบนเครือข่าย", "การซื้อ-ขายสินค้าผ่านเครือข่ายอินเทอร์เน็ต"], answerIndex: 0, note: "ธุรกรรมทางอิเล็กทรอนิกส์ หมายถึง กิจกรรมทางแพ่งและพาณิชย์ หรือการดำเนินงานของหน่วยงานรัฐที่ใช้วิธีการทางอิเล็กทรอนิกส์ ส่วนการโพสต์ข่าวสารบน Facebook เป็นการสื่อสาร/แสดงความเห็นทั่วไป ไม่ใช่นิติกรรมหรือธุรกรรมทางการค้า" },
+
+      // หมวด 3
+      { id: 23, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การปิดระบบ Maintenance ในฐานะ Admin", question: "(พรบ.คอมพ์) System Admin ปิดระบบลงทะเบียนเพื่อทำ maintenance ทำให้ประชาชนเข้าใช้งานไม่ได้ ผิดมาตราใด?", choices: ["ไม่ผิด เพราะถือเป็นการปฏิบัติงานในหน้าที่", "มาตราที่ 10", "มาตราที่ 9", "มาตราที่ 8"], answerIndex: 0, note: "การปิดระบบเพื่อบำรุงรักษา (Maintenance) เป็นการปฏิบัติงานโดยชอบตามอำนาจหน้าที่ของ System Admin จึงไม่มีเจตนากระทำความผิดโดยมิชอบตาม พ.ร.บ.คอมพิวเตอร์" },
+      { id: 24, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การ View Source ของเว็บไซต์สาธารณะ", question: "(พรบ.คอมพ์) การกด View Source ของเว็บ www.google.com มีความผิดข้อใด?", choices: ["มาตรา 6", "ไม่ผิด เพราะเป็นการเข้าถึงข้อมูลที่ไม่มีมาตรการป้องกันเฉพาะ", "มาตรา 5", "มาตรา 7"], answerIndex: 1, note: "Source code ของหน้าเว็บที่เปิดเผยต่อสาธารณะผ่านเบราว์เซอร์ เป็นข้อมูลที่ไม่มีมาตรการป้องกันการเข้าถึงเฉพาะไว้ จึงไม่เข้าข่ายความผิดฐานเข้าถึงระบบหรือข้อมูลโดยมิชอบ" },
+      { id: 25, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การใช้โปรแกรม Bot ช่วยเล่นเกม", question: "(พรบ.คอมพ์) ผู้ใช้ Bot โปรแกรมช่วยเล่นเกม มีความผิดตามมาตราใด?", choices: ["มาตราที่ 5, 7", "มาตราที่ 13", "มาตราที่ 9", "มาตราที่ 8"], answerIndex: 2, note: "มาตรา 9: การรบกวน แก้ไข เปลี่ยนแปลง หรือเพิ่มเติมข้อมูลคอมพิวเตอร์ของผู้อื่นโดยมิชอบ (การใช้โปรแกรมบอทส่งชุดคำสั่งเข้าไปแทรกแซงหรือแก้ไขข้อมูลในเซิร์ฟเวอร์เกม)" },
+      { id: 26, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การใช้นามแฝงส่งอีเมล", question: "(พรบ.คอมพ์) การใช้อีเมลนามแฝงส่งข้อความหาคนทั้งมหาวิทยาลัย ถือว่าผิดตามมาตราใด?", choices: ["มาตราที่ 14", "จากข้อมูลเพียงเท่านี้ ไม่ถือว่าผิดมาตราใด ๆ", "มาตราที่ 13", "มาตราที่ 11"], answerIndex: 1, note: "การใช้นามแฝงส่งอีเมลเพียงอย่างเดียว หากไม่ได้มีเนื้อหาที่เป็นเท็จ/เสียหาย (ม.14) หรือไม่ได้ปกปิดแหล่งกำเนิดเพื่อก่อความเดือดร้อนรำคาญ (สแปม - ม.11) จากข้อมูลเพียงเท่านี้จึงยังไม่ถือเป็นความผิด" },
+      { id: 27, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การแฮกรหัสผ่านแล้วโพสต์อวด", question: "(พรบ.คอมพ์) Hack รหัสผ่านของมหาวิทยาลัยแล้วนำมาโพสต์อวดความสามารถ ผิดมาตราใดบ้าง?", choices: ["มาตราที่ 5, 7", "มาตราที่ 7", "มาตราที่ 6", "มาตราที่ 5, 6, 7"], answerIndex: 3, note: "ม.5 เข้าถึงระบบคอมพิวเตอร์โดยมิชอบ, ม.6 ล่วงรู้มาตรการป้องกันการเข้าถึงและนำไปเปิดเผย, ม.7 เข้าถึงข้อมูลคอมพิวเตอร์โดยมิชอบ จึงผิดครบทั้ง ม.5, 6, 7" },
+      { id: 28, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "ความรับผิดชอบของผู้ให้บริการ (เว็บบอร์ด)", question: "(พรบ.คอมพ์) ผอ.ประชาไท กรณีลบความเห็นกระทู้ผิดกฎหมายบนเว็บบอร์ดช้า ผิดมาตราใด?", choices: ["มาตราที่ 15", "มาตราที่ 14", "มาตราที่ 12, 14", "มาตราที่ 12"], answerIndex: 0, note: "มาตรา 15: ความรับผิดชอบของผู้ให้บริการ (Service Provider) ที่ยินยอมหรือรู้เห็นเป็นใจให้มีการกระทำความผิดตามมาตรา 14 ในระบบคอมพิวเตอร์ที่อยู่ในความควบคุมของตน" },
+      { id: 29, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การดักรับ/สอดแนมข้อมูลการติดต่อสื่อสาร", question: "(พรบ.คอมพ์) หน่วยงานรัฐเข้าไปดักสอดแนมข้อมูลการติดต่อสื่อสารของประชาชนโดยมิชอบ ผิดมาตราใด?", choices: ["มาตรา 8", "ไม่ผิด เพราะเป็นรัฐบาล", "มาตรา 5", "มาตรา 7"], answerIndex: 0, note: "มาตรา 8: การดักรับข้อมูลคอมพิวเตอร์ของผู้อื่นโดยมิชอบ ซึ่งอยู่ระหว่างการส่งในระบบคอมพิวเตอร์" },
+      { id: 30, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การปล่อยไวรัสทำลายระบบคอมพิวเตอร์", question: "(พรบ.คอมพ์) การป้อนโปรแกรมที่มีไวรัสทำลายข้อมูลหรือขัดขวางการทำงานของระบบ เข้าข่ายผิดมาตราใด?", choices: ["มาตรา 10", "มาตรา 5", "มาตรา 7", "มาตรา 9"], answerIndex: 0, note: "มาตรา 10: การกระทำใดโดยมิชอบ เพื่อให้การทำงานของระบบคอมพิวเตอร์ของผู้อื่นถูกระงับ ชะลอ ขัดขวาง หรือรบกวนจนไม่สามารถทำงานตามปกติได้" },
+      { id: 31, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การแฮกระบบหน่วยงานรัฐและโพสต์ข้อมูล", question: "(พรบ.คอมพ์) แฮกระบบกองทัพภาคที่ 2 และบันทึกภาพหน้าเว็บมาโพสต์ ผิดมาตราใดบ้าง?", choices: ["มาตราที่ 12", "มาตราที่ 5, 7, 14", "มาตราที่ 5, 7, 12", "มาตราที่ 5, 7"], answerIndex: 1, note: "ม.5 เข้าถึงระบบคอมพิวเตอร์โดยมิชอบ, ม.7 เข้าถึงข้อมูลคอมพิวเตอร์โดยมิชอบ, และ ม.14 นำเข้าข้อมูลสู่ระบบคอมพิวเตอร์ที่น่าจะเกิดความเสียหายต่อความมั่นคง" },
+      { id: 32, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "นิยามข้อมูลการติดต่อสื่อสารของระบบ", question: "(พรบ.คอมพ์) ข้อใดคือข้อมูลเกี่ยวกับการติดต่อสื่อสารของระบบคอมพิวเตอร์?", choices: ["“ข้อมูลคอมพิวเตอร์”", "“ข้อมูลจราจรทางคอมพิวเตอร์” (Traffic Data)", "“ข้อมูลอิเล็กทรอนิกส์”", "“ระบบคอมพิวเตอร์”"], answerIndex: 1, note: "“ข้อมูลจราจรทางคอมพิวเตอร์” (Traffic Data) คือข้อมูลเกี่ยวกับการติดต่อสื่อสารของระบบคอมพิวเตอร์ เช่น แหล่งกำเนิด ต้นทาง ปลายทาง เส้นทาง เวลา วันที่ ปริมาณ ระยะเวลา ชนิดของบริการ หรืออื่นๆ" },
+      { id: 33, category: "cat3", categoryName: "หมวด 3: พ.ร.บ.คอมพิวเตอร์", title: "การเปิดเผยมาตรการป้องกันการเข้าถึง", question: "(พรบ.คอมพ์) การเปิดเผยมาตรการป้องกันการเข้าถึงระบบคอมพิวเตอร์แก่ผู้อื่นโดยมิชอบ เข้าข่ายผิดมาตราใด?", choices: ["มาตรา 7", "มาตรา 6", "มาตรา 8", "มาตรา 9"], answerIndex: 1, note: "มาตรา 6: การล่วงรู้มาตรการป้องกันการเข้าถึงระบบคอมพิวเตอร์ที่ผู้อื่นจัดทำขึ้นเป็นการเฉพาะ แล้วนำไปเปิดเผยโดยมิชอบในประการที่น่าจะเกิดความเสียหายแก่ผู้อื่น" }
+    ];
+
+    let currentCategory = 'all';
+    let userAnswers = {};
+    let isRevealAll = false;
+
+    function renderQuestions() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      const filtered = questionsData.filter(q => currentCategory === 'all' || q.category === currentCategory);
+
+      filtered.forEach((q) => {
+        const isAnswered = userAnswers.hasOwnProperty(q.id);
+        const selectedIdx = userAnswers[q.id];
+
+        let choicesHtml = q.choices.map((choice, idx) => {
+          let btnClass = "w-full text-left px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium transition hover:border-slate-300 hover:bg-slate-50";
+
+          if (isRevealAll) {
+            if (idx === q.answerIndex) btnClass += " correct-choice";
+          } else if (isAnswered) {
+            if (idx === q.answerIndex) {
+              btnClass += " correct-choice font-bold";
+            } else if (idx === selectedIdx) {
+              btnClass += " wrong-choice font-bold";
+            } else {
+              btnClass += " opacity-50 cursor-not-allowed";
+            }
+          }
+
+          return `
+            <button 
+              onclick="selectAnswer(${q.id}, ${idx})" 
+              class="${btnClass}"
+              ${isAnswered || isRevealAll ? 'disabled' : ''}>
+              <span class="inline-block w-6 text-slate-400 font-mono">${String.fromCharCode(65 + idx)}.</span>
+              ${choice}
+            </button>
+          `;
+        }).join('');
+
+        let noteHtml = (isRevealAll || isAnswered) && q.note ? `
+          <div class="mt-3 p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 font-medium">
+            💡 <strong>คำอธิบาย:</strong> ${q.note}
+          </div>
+        ` : '';
+
+        const card = `
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg">${q.categoryName}</span>
+              <span class="text-xs text-slate-400 font-mono">ข้อที่ ${q.id}/33</span>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 mb-1">${q.title}</h3>
+            <p class="text-slate-700 text-sm mb-4 leading-relaxed">${q.question}</p>
+            <div class="space-y-2">
+              ${choicesHtml}
+            </div>
+            ${noteHtml}
+          </div>
+        `;
+        container.innerHTML += card;
+      });
+
+      updateScore();
+    }
+
+    function selectAnswer(questionId, choiceIndex) {
+      if (userAnswers.hasOwnProperty(questionId)) return;
+      userAnswers[questionId] = choiceIndex;
+      renderQuestions();
+    }
+
+    function toggleRevealAll() {
+      isRevealAll = document.getElementById('toggle-reveal').checked;
+      renderQuestions();
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = "filter-btn px-4 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+      });
+      event.target.className = "filter-btn px-4 py-2 rounded-xl text-sm font-medium transition bg-indigo-600 text-white active";
+      renderQuestions();
+    }
+
+    function updateScore() {
+      let correct = 0;
+      let totalAnswered = Object.keys(userAnswers).length;
+      for (const [id, idx] of Object.entries(userAnswers)) {
+        const q = questionsData.find(item => item.id == id);
+        if (q && q.answerIndex === idx) correct++;
+      }
+      document.getElementById('score-display').innerText = `${correct} / ${totalAnswered}`;
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      document.getElementById('toggle-reveal').checked = false;
+      isRevealAll = false;
+      renderQuestions();
+    }
+
+    // Init
+    renderQuestions();
+  </script>
+</body>
+</html>
